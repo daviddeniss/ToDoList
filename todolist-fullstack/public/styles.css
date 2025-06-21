@@ -1,0 +1,184 @@
+:root {
+  --primary: #526de4;
+  --secondary: #526de4;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --success: #4cc9f0;
+  --danger: #f72585;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  color: var(--dark);
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+header {
+  background: var(--primary);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 15px;
+  font-size: 1.8rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+}
+
+.input-group button {
+  width: 50px;
+  border: none;
+  background: var(--secondary);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.input-group button:hover {
+  background: var(--dark);
+  transform: rotate(90deg);
+}
+
+.controls {
+  display: flex;
+  padding: 15px;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.filters {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-btn {
+  padding: 8px 15px;
+  border: none;
+  background: white;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-box input {
+  width: 80%;
+  padding: 8px 15px 8px 35px;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+}
+
+#sortSelect {
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  background: white;
+}
+
+#todoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#todoList li {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+#todoList li:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+#todoList li input[type="checkbox"] {
+  margin-right: 15px;
+  transform: scale(1.3);
+  cursor: pointer;
+}
+
+#todoList li .title {
+  flex: 1;
+  margin-right: 15px;
+  word-break: break-word;
+}
+
+#todoList li.completed .title {
+  text-decoration: line-through;
+  color: #888;
+}
+
+#todoList li .delete-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+
+#todoList li .delete-btn:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters {
+    justify-content: center;
+  }
+}

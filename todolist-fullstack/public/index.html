@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo List Premium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1><i class="fas fa-tasks"></i> Minhas Tarefas</h1>
+      <div class="input-group">
+        <input type="text" id="todoInput" placeholder="Adicionar nova tarefa...">
+        <button id="addBtn"><i class="fas fa-plus"></i></button>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="completed">Completas</button>
+        <button class="filter-btn" data-filter="active">Ativas</button>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Buscar...">
+        <i class="fas fa-search"></i>
+      </div>
+      <select id="sortSelect">
+        <option value="newest">Mais novas</option>
+        <option value="oldest">Mais antigas</option>
+      </select>
+    </div>
+
+    <ul id="todoList"></ul>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

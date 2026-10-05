@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Aplicação de lista de tarefas com API REST em TypeScript (Express + TypeORM + SQLite) e frontend em JavaScript puro.",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "author": "David Denis",
   "engines": {
     "node": ">=22"

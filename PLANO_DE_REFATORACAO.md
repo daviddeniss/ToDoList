@@ -9,6 +9,25 @@
 
 ---
 
+## ✅ Status da execução (04/10/2026)
+
+As fases 0 a 11 foram executadas na branch `refactor/profissionalizacao`. Os itens opcionais
+(Swagger e Docker) e a [seção 7](#7-fora-do-escopo--melhorias-futuras) ficaram de fora.
+
+Decisões tomadas durante a execução que diferem do texto original do plano:
+
+| Plano original                | O que foi feito                                                                            | Motivo                                                                                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Driver `sqlite3`              | `better-sqlite3`                                                                           | O TypeORM 1.x usa o `better-sqlite3` como driver SQLite; ele também tem binários prontos para o Node 22/24.                                                                  |
+| TypeScript mais recente (7.x) | TypeScript **6.0**                                                                         | O `typescript-eslint` e o `ts-jest` ainda não suportam o TS 7.                                                                                                               |
+| Middleware `validate.ts`      | Validação com Zod **no controller** (`schema.parse`)                                       | No Express 5, `req.query` é somente leitura; fazer o parse no controller mantém os tipos inferidos sem casts. Erros de validação continuam centralizados no `error-handler`. |
+| `jest.config.ts`              | `jest.config.js`                                                                           | Ler a configuração em `.ts` exigiria instalar o `ts-node` só para isso.                                                                                                      |
+| `dotenv`                      | `process.loadEnvFile()` nativo do Node                                                     | Uma dependência a menos.                                                                                                                                                     |
+| Rate limit lido só do env     | `createApp({ rateLimitMax })` injetável                                                    | Permite testar sem alterar variáveis de ambiente.                                                                                                                            |
+| Cobertura de `src/` inteiro   | `config/`, `logger.ts`, `server.ts`, `data-source.ts` e migrations ficam fora da cobertura | São código de inicialização/infra, validados pelos testes de integração e pelo smoke test.                                                                                   |
+
+---
+
 ## Sumário
 
 1. [Diagnóstico do estado atual](#1-diagnóstico-do-estado-atual)

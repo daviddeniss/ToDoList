@@ -14,11 +14,16 @@ import { notFound } from "./shared/middlewares/not-found";
 
 export interface AppDependencies {
   dataSource: DataSource;
+  /** Máximo de requisições por IP, por minuto, na API. Padrão: RATE_LIMIT_MAX. */
+  rateLimitMax?: number;
 }
 
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 
-export function createApp({ dataSource }: AppDependencies): Express {
+export function createApp({
+  dataSource,
+  rateLimitMax = env.RATE_LIMIT_MAX,
+}: AppDependencies): Express {
   const app = express();
 
   app.use(
@@ -44,7 +49,7 @@ export function createApp({ dataSource }: AppDependencies): Express {
     "/api",
     rateLimit({
       windowMs: 60 * 1000,
-      limit: env.RATE_LIMIT_MAX,
+      limit: rateLimitMax,
       standardHeaders: "draft-8",
       legacyHeaders: false,
       handler: (_req, _res, next) => next(new TooManyRequestsError()),

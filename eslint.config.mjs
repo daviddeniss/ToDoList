@@ -26,6 +26,10 @@ export default tseslint.config(
     languageOptions: { globals: globals.browser, sourceType: "module" },
   },
   {
+    files: ["*.js"],
+    languageOptions: { globals: globals.node, sourceType: "commonjs" },
+  },
+  {
     files: ["**/*.mjs"],
     languageOptions: { globals: globals.node },
   },

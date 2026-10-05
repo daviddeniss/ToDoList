@@ -28,75 +28,75 @@ Análise feita arquivo por arquivo. Os problemas estão classificados por severi
 
 ### 🔴 Críticos — impedem o projeto de compilar/rodar
 
-| # | Arquivo | Problema |
-|---|---------|----------|
-| C1 | `api/src/app.ts` | Importa `./utils/errorHandler`, mas **o arquivo não existe**. |
-| C2 | `api/src/routes/todoRoutes.ts` | Usa os tipos `Request` e `Response` **sem importá-los do Express**. O TypeScript resolve para os tipos globais do `fetch` (DOM), o que gera erros como `res.status is not callable`. |
-| C3 | `tsconfig.json` | `rootDir: "./src"` mas `include: ["api/src/**/*"]` → erro *"file is not under rootDir"*. |
-| C4 | Todo o backend | `reflect-metadata` está instalado, mas **nunca é importado**. Os decorators do TypeORM falham sem ele. |
-| C5 | `data-source.ts`, `todoRoutes.ts` | Importam `./entities/Todo`, mas o arquivo se chama `todo.ts`. Funciona no Windows (case-insensitive), **quebra no Linux/Docker/CI**. |
-| C6 | Repositório | Não há `package-lock.json` nem `.gitignore` → instalações não reproduzíveis e risco de comitar `node_modules`, `dist` e `database.sqlite`. |
+| #   | Arquivo                           | Problema                                                                                                                                                                             |
+| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C1  | `api/src/app.ts`                  | Importa `./utils/errorHandler`, mas **o arquivo não existe**.                                                                                                                        |
+| C2  | `api/src/routes/todoRoutes.ts`    | Usa os tipos `Request` e `Response` **sem importá-los do Express**. O TypeScript resolve para os tipos globais do `fetch` (DOM), o que gera erros como `res.status is not callable`. |
+| C3  | `tsconfig.json`                   | `rootDir: "./src"` mas `include: ["api/src/**/*"]` → erro _"file is not under rootDir"_.                                                                                             |
+| C4  | Todo o backend                    | `reflect-metadata` está instalado, mas **nunca é importado**. Os decorators do TypeORM falham sem ele.                                                                               |
+| C5  | `data-source.ts`, `todoRoutes.ts` | Importam `./entities/Todo`, mas o arquivo se chama `todo.ts`. Funciona no Windows (case-insensitive), **quebra no Linux/Docker/CI**.                                                 |
+| C6  | Repositório                       | Não há `package-lock.json` nem `.gitignore` → instalações não reproduzíveis e risco de comitar `node_modules`, `dist` e `database.sqlite`.                                           |
 
 ### 🟠 Altos — bugs e falhas de segurança
 
-| # | Arquivo | Problema |
-|---|---------|----------|
-| A1 | `public/app.js` | **XSS:** `todo.title` é inserido via `innerHTML` sem escape. Uma tarefa com título `<img src=x onerror=alert(1)>` executa código no navegador. |
-| A2 | `todoRoutes.ts` (PUT) | **Mass assignment:** `todoRepository.merge(todo, req.body)` aceita qualquer campo do corpo — é possível sobrescrever `id` e `createdAt`. |
-| A3 | `todoRoutes.ts` | **Sem validação de entrada:** `title` pode ser número, objeto, só espaços ou ter mais de 100 caracteres (SQLite não aplica `length`). `completed` pode ser qualquer tipo. `:id` não é validado como UUID. |
-| A4 | `public/app.js` | `fetch` não lança erro em respostas 4xx/5xx; o código nunca verifica `response.ok`. A UI marca a tarefa como concluída/removida **mesmo quando a API falha**. |
-| A5 | `data-source.ts` | `synchronize: true` altera o schema automaticamente — perigoso fora de desenvolvimento (pode apagar dados). Não há migrations. |
-| A6 | `public/app.js` | URL da API fixa em `http://localhost:3000`. O Express também não serve a pasta `public/`, então frontend e backend rodam separados sem motivo. |
-| A7 | `app.ts` | `cors()` liberado para qualquer origem; sem `helmet`, sem limite de tamanho de body, sem rate limit. |
+| #   | Arquivo               | Problema                                                                                                                                                                                                  |
+| --- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | `public/app.js`       | **XSS:** `todo.title` é inserido via `innerHTML` sem escape. Uma tarefa com título `<img src=x onerror=alert(1)>` executa código no navegador.                                                            |
+| A2  | `todoRoutes.ts` (PUT) | **Mass assignment:** `todoRepository.merge(todo, req.body)` aceita qualquer campo do corpo — é possível sobrescrever `id` e `createdAt`.                                                                  |
+| A3  | `todoRoutes.ts`       | **Sem validação de entrada:** `title` pode ser número, objeto, só espaços ou ter mais de 100 caracteres (SQLite não aplica `length`). `completed` pode ser qualquer tipo. `:id` não é validado como UUID. |
+| A4  | `public/app.js`       | `fetch` não lança erro em respostas 4xx/5xx; o código nunca verifica `response.ok`. A UI marca a tarefa como concluída/removida **mesmo quando a API falha**.                                             |
+| A5  | `data-source.ts`      | `synchronize: true` altera o schema automaticamente — perigoso fora de desenvolvimento (pode apagar dados). Não há migrations.                                                                            |
+| A6  | `public/app.js`       | URL da API fixa em `http://localhost:3000`. O Express também não serve a pasta `public/`, então frontend e backend rodam separados sem motivo.                                                            |
+| A7  | `app.ts`              | `cors()` liberado para qualquer origem; sem `helmet`, sem limite de tamanho de body, sem rate limit.                                                                                                      |
 
 ### 🟡 Médios — arquitetura e manutenibilidade
 
-| # | Onde | Problema |
-|---|------|----------|
-| M1 | `todoRoutes.ts` | Rota, regra de negócio e acesso a dados misturados no mesmo arquivo. Difícil testar e evoluir. |
-| M2 | `todoRoutes.ts` | Repositório obtido no carregamento do módulo (acoplamento ao singleton `AppDataSource`) → impossível injetar um banco de teste. |
-| M3 | Backend | Cada rota tem seu `try/catch` com mensagens diferentes; formato de erro inconsistente; erros reais são engolidos (nada é logado). |
-| M4 | `types/todo.ts` | Interface `Todo` duplicada e não utilizada (conflita em nome com a entidade). |
-| M5 | Configuração | `PORT` e caminho do banco sem validação/centralização; sem `.env.example`. |
-| M6 | `server.ts` | Sem *graceful shutdown* (SIGINT/SIGTERM não fecham servidor e conexão com o banco). Logs via `console.log`. |
-| M7 | API | `PUT` usado para atualização parcial (semântica correta é `PATCH`). Filtro `completed=""` é enviado como string vazia. Ordenação sem padrão quando `sort` não vem. Sem campo `updatedAt`. |
-| M8 | `package.json` | `main: index.js` inexistente, script `test` falso, `start` usa `ts-node` em produção, sem `engines`, sem lint/format. |
-| M9 | Testes | O README cita Jest, mas **não existe nenhum teste**. |
-| M10 | `public/app.js` | Busca dispara uma requisição a cada tecla (sem *debounce*) → condições de corrida; re-registra listeners a cada render (sem *event delegation*). |
+| #   | Onde            | Problema                                                                                                                                                                                  |
+| --- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1  | `todoRoutes.ts` | Rota, regra de negócio e acesso a dados misturados no mesmo arquivo. Difícil testar e evoluir.                                                                                            |
+| M2  | `todoRoutes.ts` | Repositório obtido no carregamento do módulo (acoplamento ao singleton `AppDataSource`) → impossível injetar um banco de teste.                                                           |
+| M3  | Backend         | Cada rota tem seu `try/catch` com mensagens diferentes; formato de erro inconsistente; erros reais são engolidos (nada é logado).                                                         |
+| M4  | `types/todo.ts` | Interface `Todo` duplicada e não utilizada (conflita em nome com a entidade).                                                                                                             |
+| M5  | Configuração    | `PORT` e caminho do banco sem validação/centralização; sem `.env.example`.                                                                                                                |
+| M6  | `server.ts`     | Sem _graceful shutdown_ (SIGINT/SIGTERM não fecham servidor e conexão com o banco). Logs via `console.log`.                                                                               |
+| M7  | API             | `PUT` usado para atualização parcial (semântica correta é `PATCH`). Filtro `completed=""` é enviado como string vazia. Ordenação sem padrão quando `sort` não vem. Sem campo `updatedAt`. |
+| M8  | `package.json`  | `main: index.js` inexistente, script `test` falso, `start` usa `ts-node` em produção, sem `engines`, sem lint/format.                                                                     |
+| M9  | Testes          | O README cita Jest, mas **não existe nenhum teste**.                                                                                                                                      |
+| M10 | `public/app.js` | Busca dispara uma requisição a cada tecla (sem _debounce_) → condições de corrida; re-registra listeners a cada render (sem _event delegation_).                                          |
 
 ### 🟢 Baixos — qualidade de UI/UX e documentação
 
-| # | Onde | Problema |
-|---|------|----------|
-| B1 | `index.html` | Inputs sem `<label>`/`aria-label`; botões só com ícone sem texto acessível; filtro sem `aria-pressed`. |
-| B2 | `public/` | Sem estado de *loading*, sem mensagem de lista vazia, sem feedback de erro para o usuário. |
-| B3 | `styles.css` | `--secondary` igual a `--primary`; input de busca com `width: 80%` desalinhado; `--success` não usado; sem foco visível (`:focus-visible`). |
-| B4 | `README.md` | Fica na raiz, mas o projeto está em `todolist-fullstack/`. Não explica como instalar, rodar ou testar. Lista funcionalidades que não existem (testes, validação, "tratamento de erros robusto"). |
-| B5 | Repositório | Projeto aninhado numa subpasta sem necessidade; pasta pai chama `Python` mas o projeto é Node (apenas observação). |
+| #   | Onde         | Problema                                                                                                                                                                                         |
+| --- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| B1  | `index.html` | Inputs sem `<label>`/`aria-label`; botões só com ícone sem texto acessível; filtro sem `aria-pressed`.                                                                                           |
+| B2  | `public/`    | Sem estado de _loading_, sem mensagem de lista vazia, sem feedback de erro para o usuário.                                                                                                       |
+| B3  | `styles.css` | `--secondary` igual a `--primary`; input de busca com `width: 80%` desalinhado; `--success` não usado; sem foco visível (`:focus-visible`).                                                      |
+| B4  | `README.md`  | Fica na raiz, mas o projeto está em `todolist-fullstack/`. Não explica como instalar, rodar ou testar. Lista funcionalidades que não existem (testes, validação, "tratamento de erros robusto"). |
+| B5  | Repositório  | Projeto aninhado numa subpasta sem necessidade; pasta pai chama `Python` mas o projeto é Node (apenas observação).                                                                               |
 
 ---
 
 ## 2. Princípios e decisões de arquitetura
 
-| Decisão | Escolha | Justificativa |
-|---------|---------|---------------|
-| Arquitetura do backend | **Camadas por módulo**: `routes → controller → service → repository` | Separa HTTP de regra de negócio e de persistência; cada camada testável isoladamente. Simples o bastante para o tamanho do projeto (sem over-engineering de Clean Architecture completa). |
-| Organização | **Por feature** (`modules/todos/`) | Tudo de "todos" num lugar só; escala adicionando novos módulos. |
-| Injeção de dependência | **Manual, por construtor** (sem framework de DI) | `createApp({ dataSource })` permite usar banco em memória nos testes. |
-| Validação | **Zod** | Valida `body`, `params` e `query` e gera os tipos TypeScript a partir do schema (fonte única da verdade). |
-| Configuração | **`.env` + Zod** (`src/config/env.ts`) | Falha rápido na inicialização se faltar/errar uma variável. |
-| Erros | **Classe `AppError` + middleware central** | Formato de erro único; nenhum `try/catch` repetido nas rotas (Express 5 propaga erros de `async` automaticamente). |
-| Express | **Atualizar para Express 5** | Suporte nativo a handlers `async`, melhor tratamento de erros. |
-| Banco | **TypeORM com migrations**; `synchronize` só em teste | Evolução de schema versionada e segura. |
-| Logs | **pino** + **pino-http** | Logs estruturados, rápidos; `pino-pretty` só em dev. |
-| Segurança | **helmet**, CORS por whitelist, `express.json({ limit })`, **express-rate-limit** | Defesas básicas esperadas em qualquer API. |
-| Execução em dev | **tsx** (`tsx watch`) | Substitui `ts-node`: mais rápido e com hot-reload. |
-| Produção | `tsc` → `node dist/server.js` | Não roda TypeScript em produção. |
-| Testes | **Jest + ts-jest + supertest** (mantém o que o README promete) | Unitários (service) + integração (rotas com SQLite em memória). |
-| Qualidade | **ESLint (flat config) + typescript-eslint + Prettier**, **Husky + lint-staged**, **Conventional Commits** | Padronização automática antes de cada commit. |
-| Frontend | **JS puro com ES Modules** separados em `api`, `ui` e `main` | Mantém a simplicidade (sem framework/bundler), mas com responsabilidades claras. Servido pelo próprio Express. |
-| CI | **GitHub Actions**: lint → typecheck → test → build | Garante que `main` sempre compila e passa nos testes. |
-| Node | **Node 22 LTS** fixado via `engines` + `.nvmrc` | Ambiente reproduzível. |
+| Decisão                | Escolha                                                                                                    | Justificativa                                                                                                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arquitetura do backend | **Camadas por módulo**: `routes → controller → service → repository`                                       | Separa HTTP de regra de negócio e de persistência; cada camada testável isoladamente. Simples o bastante para o tamanho do projeto (sem over-engineering de Clean Architecture completa). |
+| Organização            | **Por feature** (`modules/todos/`)                                                                         | Tudo de "todos" num lugar só; escala adicionando novos módulos.                                                                                                                           |
+| Injeção de dependência | **Manual, por construtor** (sem framework de DI)                                                           | `createApp({ dataSource })` permite usar banco em memória nos testes.                                                                                                                     |
+| Validação              | **Zod**                                                                                                    | Valida `body`, `params` e `query` e gera os tipos TypeScript a partir do schema (fonte única da verdade).                                                                                 |
+| Configuração           | **`.env` + Zod** (`src/config/env.ts`)                                                                     | Falha rápido na inicialização se faltar/errar uma variável.                                                                                                                               |
+| Erros                  | **Classe `AppError` + middleware central**                                                                 | Formato de erro único; nenhum `try/catch` repetido nas rotas (Express 5 propaga erros de `async` automaticamente).                                                                        |
+| Express                | **Atualizar para Express 5**                                                                               | Suporte nativo a handlers `async`, melhor tratamento de erros.                                                                                                                            |
+| Banco                  | **TypeORM com migrations**; `synchronize` só em teste                                                      | Evolução de schema versionada e segura.                                                                                                                                                   |
+| Logs                   | **pino** + **pino-http**                                                                                   | Logs estruturados, rápidos; `pino-pretty` só em dev.                                                                                                                                      |
+| Segurança              | **helmet**, CORS por whitelist, `express.json({ limit })`, **express-rate-limit**                          | Defesas básicas esperadas em qualquer API.                                                                                                                                                |
+| Execução em dev        | **tsx** (`tsx watch`)                                                                                      | Substitui `ts-node`: mais rápido e com hot-reload.                                                                                                                                        |
+| Produção               | `tsc` → `node dist/server.js`                                                                              | Não roda TypeScript em produção.                                                                                                                                                          |
+| Testes                 | **Jest + ts-jest + supertest** (mantém o que o README promete)                                             | Unitários (service) + integração (rotas com SQLite em memória).                                                                                                                           |
+| Qualidade              | **ESLint (flat config) + typescript-eslint + Prettier**, **Husky + lint-staged**, **Conventional Commits** | Padronização automática antes de cada commit.                                                                                                                                             |
+| Frontend               | **JS puro com ES Modules** separados em `api`, `ui` e `main`                                               | Mantém a simplicidade (sem framework/bundler), mas com responsabilidades claras. Servido pelo próprio Express.                                                                            |
+| CI                     | **GitHub Actions**: lint → typecheck → test → build                                                        | Garante que `main` sempre compila e passa nos testes.                                                                                                                                     |
+| Node                   | **Node 22 LTS** fixado via `engines` + `.nvmrc`                                                            | Ambiente reproduzível.                                                                                                                                                                    |
 
 ---
 
@@ -197,22 +197,22 @@ Qualquer erro lançado em qualquer camada cai no `error-handler.ts`, que respond
 
 Base: `/api/v1`
 
-| Método | Rota | Descrição | Sucesso |
-|--------|------|-----------|---------|
-| `GET` | `/health` | Health check (inclui ping no banco) | `200` |
-| `GET` | `/api/v1/todos` | Lista tarefas com filtros | `200` |
-| `GET` | `/api/v1/todos/:id` | Busca uma tarefa | `200` |
-| `POST` | `/api/v1/todos` | Cria tarefa | `201` + header `Location` |
-| `PATCH` | `/api/v1/todos/:id` | Atualiza parcialmente (`title` e/ou `completed`) | `200` |
-| `DELETE` | `/api/v1/todos/:id` | Remove tarefa | `204` |
+| Método   | Rota                | Descrição                                        | Sucesso                   |
+| -------- | ------------------- | ------------------------------------------------ | ------------------------- |
+| `GET`    | `/health`           | Health check (inclui ping no banco)              | `200`                     |
+| `GET`    | `/api/v1/todos`     | Lista tarefas com filtros                        | `200`                     |
+| `GET`    | `/api/v1/todos/:id` | Busca uma tarefa                                 | `200`                     |
+| `POST`   | `/api/v1/todos`     | Cria tarefa                                      | `201` + header `Location` |
+| `PATCH`  | `/api/v1/todos/:id` | Atualiza parcialmente (`title` e/ou `completed`) | `200`                     |
+| `DELETE` | `/api/v1/todos/:id` | Remove tarefa                                    | `204`                     |
 
 ### Query params de `GET /todos`
 
-| Param | Valores | Padrão |
-|-------|---------|--------|
-| `status` | `all` \| `active` \| `completed` | `all` |
-| `search` | string (máx. 100) | — |
-| `sort` | `newest` \| `oldest` | `newest` |
+| Param    | Valores                          | Padrão   |
+| -------- | -------------------------------- | -------- |
+| `status` | `all` \| `active` \| `completed` | `all`    |
+| `search` | string (máx. 100)                | —        |
+| `sort`   | `newest` \| `oldest`             | `newest` |
 
 > Substitui o atual `completed=true|false|""`, que é ambíguo.
 
@@ -310,7 +310,7 @@ Recomendado: uma branch por fase (`refactor/fase-1-fundacao`, etc.) com PR para 
 - [ ] `.env.example` documentado.
 - [ ] `src/shared/logger.ts` com pino (`pino-pretty` em dev) e `pino-http` no app.
 - [ ] `app.ts` vira `createApp(deps)` (factory) — sem efeitos colaterais na importação.
-- [ ] `server.ts`: inicializa banco → sobe servidor → *graceful shutdown* em `SIGINT`/`SIGTERM` (fecha HTTP e `dataSource.destroy()`).
+- [ ] `server.ts`: inicializa banco → sobe servidor → _graceful shutdown_ em `SIGINT`/`SIGTERM` (fecha HTTP e `dataSource.destroy()`).
 - [ ] Endpoint `GET /health`.
 - [ ] Atualizar para **Express 5**.
 
@@ -398,9 +398,9 @@ Recomendado: uma branch por fase (`refactor/fase-1-fundacao`, etc.) com PR para 
 - [ ] Dividir `app.js` em ES Modules (`api.js`, `ui.js`, `utils.js`, `main.js`) com `<script type="module">`.
 - [ ] **Corrigir XSS:** montar itens com `document.createElement` + `textContent` (ou `<template>`), nunca `innerHTML` com dados do usuário — resolve A1.
 - [ ] Cliente HTTP verifica `response.ok` e lança erro com a mensagem da API — resolve A4.
-- [ ] Atualização otimista com *rollback* em caso de erro (checkbox volta ao estado anterior).
-- [ ] *Debounce* (300 ms) na busca + `AbortController` para cancelar requisições antigas — resolve M10.
-- [ ] *Event delegation* em `#todoList` (um listener só).
+- [ ] Atualização otimista com _rollback_ em caso de erro (checkbox volta ao estado anterior).
+- [ ] _Debounce_ (300 ms) na busca + `AbortController` para cancelar requisições antigas — resolve M10.
+- [ ] _Event delegation_ em `#todoList` (um listener só).
 - [ ] Estados de UI: carregando, lista vazia, mensagem de erro (toast/banner com `role="alert"`).
 - [ ] Adaptar ao novo contrato (`status=all|active|completed`, `PATCH`).
 - [ ] Limite de 100 caracteres no input (`maxlength`).
@@ -437,16 +437,16 @@ Recomendado: uma branch por fase (`refactor/fase-1-fundacao`, etc.) com PR para 
 
 ### Scripts finais do `package.json`
 
-| Script | Comando |
-|--------|---------|
-| `dev` | `tsx watch src/server.ts` |
-| `build` | `tsc -p tsconfig.build.json` |
-| `start` | `node dist/server.js` |
-| `typecheck` | `tsc --noEmit` |
-| `lint` / `lint:fix` | `eslint .` / `eslint . --fix` |
-| `format` / `format:check` | `prettier --write .` / `prettier --check .` |
+| Script                                  | Comando                                     |
+| --------------------------------------- | ------------------------------------------- |
+| `dev`                                   | `tsx watch src/server.ts`                   |
+| `build`                                 | `tsc -p tsconfig.build.json`                |
+| `start`                                 | `node dist/server.js`                       |
+| `typecheck`                             | `tsc --noEmit`                              |
+| `lint` / `lint:fix`                     | `eslint .` / `eslint . --fix`               |
+| `format` / `format:check`               | `prettier --write .` / `prettier --check .` |
 | `test` / `test:watch` / `test:coverage` | `jest` / `jest --watch` / `jest --coverage` |
-| `migration:run` / `migration:revert` | via CLI do TypeORM |
+| `migration:run` / `migration:revert`    | via CLI do TypeORM                          |
 
 ### Dependências
 

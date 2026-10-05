@@ -5,17 +5,19 @@ Uma API moderna para gerenciamento de tarefas, desenvolvida com TypeScript, Expr
 ## ✨ Funcionalidades
 
 ### Backend
+
 ✅ CRUD completo de tarefas  
 ✅ Filtros avançados (status, busca textual, ordenação)  
 ✅ Banco de dados SQLite com TypeORM  
 ✅ Validação de dados  
-✅ Tratamento de erros robusto  
+✅ Tratamento de erros robusto
 
 ### Frontend
+
 📱 Design responsivo  
 🎨 Interface moderna com animações  
 🔍 Sistema de filtros combináveis  
-⚡ Atualização em tempo real  
+⚡ Atualização em tempo real
 
 ## 🛠️ Tecnologias
 
@@ -30,4 +32,3 @@ Uma API moderna para gerenciamento de tarefas, desenvolvida com TypeScript, Expr
   - HTML5/CSS3
   - JavaScript Vanilla
   - Font Awesome
- 

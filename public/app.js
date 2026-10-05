@@ -23,10 +23,10 @@ class TodoApp {
     });
 
     // Filtros e busca
-    this.filterButtons.forEach(btn => {
+    this.filterButtons.forEach((btn) => {
       btn.addEventListener("click", () => this.applyFilter(btn));
     });
-    
+
     this.searchInput.addEventListener("input", () => this.loadTodos());
     this.sortSelect.addEventListener("change", () => this.loadTodos());
   }
@@ -37,7 +37,7 @@ class TodoApp {
       const params = new URLSearchParams({
         completed: activeFilter === "all" ? "" : activeFilter === "completed",
         search: this.searchInput.value,
-        sort: this.sortSelect.value
+        sort: this.sortSelect.value,
       });
 
       const response = await fetch(`${this.API_URL}?${params}`);
@@ -49,20 +49,24 @@ class TodoApp {
   }
 
   renderTodos(todos) {
-    this.todoList.innerHTML = todos.map(todo => `
-      <li class="${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
-        <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+    this.todoList.innerHTML = todos
+      .map(
+        (todo) => `
+      <li class="${todo.completed ? "completed" : ""}" data-id="${todo.id}">
+        <input type="checkbox" ${todo.completed ? "checked" : ""}>
         <span class="title">${todo.title}</span>
         <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
       </li>
-    `).join("");
+    `,
+      )
+      .join("");
 
     // Adiciona eventos aos elementos renderizados
-    document.querySelectorAll("#todoList li input[type='checkbox']").forEach(checkbox => {
+    document.querySelectorAll("#todoList li input[type='checkbox']").forEach((checkbox) => {
       checkbox.addEventListener("change", (e) => this.toggleTodo(e));
     });
 
-    document.querySelectorAll(".delete-btn").forEach(btn => {
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => this.deleteTodo(e));
     });
   }
@@ -75,7 +79,7 @@ class TodoApp {
       await fetch(this.API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title })
+        body: JSON.stringify({ title }),
       });
       this.todoInput.value = "";
       this.loadTodos();
@@ -93,7 +97,7 @@ class TodoApp {
       await fetch(`${this.API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ completed })
+        body: JSON.stringify({ completed }),
       });
       li.classList.toggle("completed", completed);
     } catch (error) {
@@ -114,7 +118,7 @@ class TodoApp {
   }
 
   applyFilter(btn) {
-    this.filterButtons.forEach(b => b.classList.remove("active"));
+    this.filterButtons.forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     this.loadTodos();
   }

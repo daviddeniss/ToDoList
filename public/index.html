@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Gerencie suas tarefas do dia a dia." />
+    <title>Minhas Tarefas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <main class="app-container">
+      <header class="app-header">
+        <h1><i class="fas fa-tasks" aria-hidden="true"></i> Minhas Tarefas</h1>
+        <form id="todoForm" class="input-group" novalidate>
+          <label for="todoInput" class="visually-hidden">Nova tarefa</label>
+          <input
+            type="text"
+            id="todoInput"
+            name="title"
+            placeholder="Adicionar nova tarefa..."
+            maxlength="100"
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="addBtn" aria-label="Adicionar tarefa">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+          </button>
+        </form>
+      </header>
+
+      <section class="controls" aria-label="Filtros da lista">
+        <div class="filters" role="group" aria-label="Filtrar por status">
+          <button type="button" class="filter-btn active" data-status="all" aria-pressed="true">
+            Todas
+          </button>
+          <button type="button" class="filter-btn" data-status="active" aria-pressed="false">
+            Ativas
+          </button>
+          <button type="button" class="filter-btn" data-status="completed" aria-pressed="false">
+            Concluídas
+          </button>
+        </div>
+
+        <div class="search-box">
+          <label for="searchInput" class="visually-hidden">Buscar tarefas</label>
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Buscar..."
+            maxlength="100"
+            autocomplete="off"
+          />
+        </div>
+
+        <label for="sortSelect" class="visually-hidden">Ordenar tarefas</label>
+        <select id="sortSelect">
+          <option value="newest">Mais novas</option>
+          <option value="oldest">Mais antigas</option>
+        </select>
+      </section>
+
+      <div id="feedback" class="feedback" role="alert" hidden></div>
+
+      <ul id="todoList" class="todo-list" aria-label="Tarefas" aria-live="polite"></ul>
+      <p id="emptyState" class="empty-state" hidden>Nenhuma tarefa encontrada.</p>
+
+      <footer class="app-footer">
+        <span id="counter"></span>
+      </footer>
+    </main>
+
+    <template id="todoItemTemplate">
+      <li class="todo-item">
+        <label class="todo-label">
+          <input type="checkbox" class="todo-toggle" />
+          <span class="todo-title"></span>
+        </label>
+        <button type="button" class="delete-btn">
+          <i class="fas fa-trash-alt" aria-hidden="true"></i>
+        </button>
+      </li>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+
+# Build e cobertura
+dist/
+coverage/
+
+# Banco de dados local
+data/
+*.sqlite
+*.sqlite3
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Documentos locais de planejamento
+PLANO_DE_REFATORACAO.md

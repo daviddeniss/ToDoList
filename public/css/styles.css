@@ -1,0 +1,307 @@
+:root {
+  --primary: #526de4;
+  --primary-dark: #3a52bf;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --surface: #ffffff;
+  --surface-alt: #f8f9fa;
+  --danger: #c9184a;
+  --danger-bg: #fde8ee;
+  --focus: #ffbf47;
+  --radius-pill: 50px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    Roboto,
+    sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  color: var(--text);
+}
+
+/* Visível apenas para leitores de tela. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--surface);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Cabeçalho */
+.app-header {
+  background: var(--primary);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0 0 15px;
+  font-size: 1.8rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.input-group input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 15px;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+}
+
+.input-group button {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #fff;
+  background: var(--primary-dark);
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    transform 0.3s;
+}
+
+.input-group button:hover:not(:disabled) {
+  background: var(--text);
+  transform: rotate(90deg);
+}
+
+.input-group button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Controles */
+.controls {
+  display: flex;
+  padding: 15px;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.filters {
+  display: flex;
+  gap: 5px;
+}
+
+.filter-btn {
+  padding: 8px 15px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: var(--primary);
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 15px 8px 35px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+#sortSelect {
+  padding: 8px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+/* Feedback de erro */
+.feedback {
+  margin: 15px 20px 0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 0.95rem;
+}
+
+/* Lista */
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  transition: opacity 0.2s;
+}
+
+.todo-list.loading {
+  opacity: 0.6;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+
+.todo-item:hover {
+  background: var(--surface-alt);
+}
+
+.todo-label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.todo-toggle {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.todo-title {
+  word-break: break-word;
+}
+
+.todo-item.completed .todo-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  padding: 6px 8px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--danger);
+  cursor: pointer;
+  opacity: 0.6;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.delete-btn:hover,
+.delete-btn:focus-visible {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.empty-state {
+  margin: 0;
+  padding: 30px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.app-footer {
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.app-footer:has(#counter:empty) {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    justify-content: center;
+  }
+
+  .search-box {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

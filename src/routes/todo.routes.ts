@@ -1,6 +1,6 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import { AppDataSource } from "../data-source";
-import { Todo } from "../entities/Todo";
+import { Todo } from "../entities/todo.entity";
 
 const router = Router();
 const todoRepository = AppDataSource.getRepository(Todo);

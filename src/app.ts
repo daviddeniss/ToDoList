@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import todoRoutes from "./routes/todoRoutes";
+import todoRoutes from "./routes/todo.routes";
 import { errorHandler } from "./utils/errorHandler";
 
 const app = express();

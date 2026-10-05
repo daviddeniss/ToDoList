@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
-import { Todo } from "./entities/Todo";
+import { Todo } from "./entities/todo.entity";
 
 export const AppDataSource = new DataSource({
-  type: "sqlite",
+  type: "better-sqlite3",
   database: "database.sqlite",
   synchronize: true,
   logging: false,

@@ -25,3 +25,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Documentos locais de planejamento
+PLANO_DE_REFATORACAO.md

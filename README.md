@@ -5,6 +5,14 @@ Aplicação de lista de tarefas com **API REST em TypeScript** (Express 5 + Type
 
 ![CI](https://github.com/daviddeniss/ToDoList/actions/workflows/ci.yml/badge.svg)
 
+## 📚 Documentação
+
+| Documento                                     | Conteúdo                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------- |
+| [Documentação completa](docs/DOCUMENTACAO.md) | Arquitetura, API, banco, segurança, testes, convenções e evolução |
+| [Como rodar](docs/COMO_RODAR.md)              | Passo a passo para desenvolvimento, testes e produção             |
+| [Preparar o ambiente](docs/AMBIENTE.md)       | Configuração de uma máquina nova (Windows, Linux e macOS)         |
+
 ## ✨ Funcionalidades
 
 **Backend**
